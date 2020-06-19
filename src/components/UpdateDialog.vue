@@ -1,0 +1,125 @@
+<template>
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+        <el-form :model="form">
+            <el-form-item label="姓名" :label-width="formLabelWidth">
+                <el-input v-model="form.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="性别" :label-width="formLabelWidth">
+                <el-select v-model="form.region">
+                    <el-option label="男" value="男"></el-option>
+                    <el-option label="女" value="女"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item
+                label="年龄"
+                prop="age"
+                :rules="[
+                { required: true, message: '年龄不能为空'},
+                { type: 'number', message: '年龄必须为数字值'}
+                ]"
+            >
+                <el-input type="age" v-model.number="numberValidateForm.age" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="入职日期">
+                <el-date-picker
+                v-model="form.entryDate"
+                type="date"
+                placeholder="选择日期"
+                :picker-options="pickerOptions0">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item
+                prop="email"
+                label="邮箱"
+                :rules="[
+                { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                ]"
+            >
+                <el-input v-model="form.email"></el-input>
+            </el-form-item>
+            <el-form-item label="联系方式" :label-width="formLabelWidth">
+                <el-input v-model="form.phone" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                    type="textarea"
+                    :rows="2"
+                    placeholder="请输入内容"
+                    v-model="form.personalPlan">
+                </el-input>
+            </el-form-item>
+            <el-form-item  label="个人定位" :label-width="formLabelWidth">
+                <el-checkbox-group v-model="form.personalLocation">
+                    <el-checkbox label="技术型"></el-checkbox>
+                    <el-checkbox label="业务型"></el-checkbox>
+                    <el-checkbox label="营销型"></el-checkbox>
+                    <el-checkbox label="管理型"></el-checkbox>
+                </el-checkbox-group>
+            </el-form-item>
+        </el-form>
+        <RigionSelector :avalueProvince = "form.address.province" :avalueCity = "form.address.city" :avalueOrigin = "form.address.origin"/>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        </div>
+    </el-dialog>
+</template>
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import RigionSelector from "./RigionSelector.vue";
+
+interface Address {
+    province: string;
+    city: string;
+    origin: string;
+}
+
+interface User{
+    date: string;
+    name: string;
+    address: Address;
+    age: string;
+    entryDate: string;
+    email: string;
+    phone: string;
+    personalPlan: string;
+    personalLocation: string[];
+}
+
+@Component({
+    components: {
+    RigionSelector
+    },
+})
+export default class UpdateDialog extends Vue { 
+  
+    @Prop({ default: true }) 
+    dialogFormVisible!: boolean;
+    form: User={
+        name: '',
+        date:'',
+        address: {
+            province: '',
+            city: '',
+            origin: ''
+        },
+        age:'',
+        entryDate: '',
+        email: '',
+        phone: '',
+        personalPlan: '',
+        personalLocation: [],
+    };
+    public formLabelWidth: string= '120px';
+    public numberValidateForm: any= {
+            age: ''
+    };
+    public pickerOptions0: any= {
+        disabledDate(time: any) {
+            return time.getTime() > Date.now() - 8.64e6
+        }
+    };  
+}
+</script>
+<style></style>
