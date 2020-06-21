@@ -70,12 +70,6 @@
 
 export default class RegionSelector extends Vue {
 
-      @Prop()
-      public avalueProvince: string = '';// 所选的省
-      @Prop()
-      public avalueCity: string = ''; // 所选的市
-      @Prop()
-      public avalueOrigin: string = ''; // 所选的区
 
       public valueProvince: string = '';// 所选的省
       public valueCity: string = ''; // 所选的市
@@ -91,9 +85,6 @@ export default class RegionSelector extends Vue {
       };
 
       mounted () { // 在mounted时候赋值，子组件只更新一次，后面重新选择后展示此组件的数据，不再更新
-        this.valueProvince = this.avalueProvince;
-        this.valueCity = this.avalueCity;
-        this.valueOrigin = this.avalueOrigin;
       };
     
       
@@ -162,6 +153,12 @@ export default class RegionSelector extends Vue {
             }
           }
         }
+      };
+
+      clear() {
+          this.valueProvince= '';// 所选的省
+          this.valueCity= ''; // 所选的市
+          this.valueOrigin= ''; // 所选的区
       }
   
 }

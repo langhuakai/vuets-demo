@@ -263,7 +263,7 @@
         this.currentPage = currentPage;
       };
       created(){
-        this.total=this.tableData.length;
+        this.total= this.tableData.length;
       };
     }
 </script>

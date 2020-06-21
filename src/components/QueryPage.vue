@@ -21,14 +21,14 @@
         </el-date-picker>
       </el-form-item>      
     </el-form>
-    <RigionSelector :avalueProvince = "formInline.address.province" :avalueCity = "formInline.address.city" :avalueOrigin = "formInline.address.origin"/>
+    <RigionSelector ref="rigionSelector"/>
 
     <div class="center">
       <el-button type="primary" @click="submitForm('numberValidateForm')">提交</el-button>
       <el-button @click="resetForm('numberValidateForm')">重置</el-button>
     </div>
     <TestTable></TestTable>
-    <UpdateDialog :dialogFormVisible= "dialogFormVisible"/>
+    <UpdateDialog :dialogFormVisible= "dialogUpdateVisible"  @handleUpdateClose="handleUpdateClose"/>
   </div>
 </template>
 
@@ -40,13 +40,13 @@
     import RigionSelector from "./RigionSelector.vue";
    // import china_address from '/static/china_address.json';
 
-    interface Address{
+    interface Address {
       province: string;
       city: string;
       origin: string;
     }
 
-    interface UserForm{
+    interface UserForm {
       userName: string;
       personalPlan: string;
       entryDate: string;
@@ -57,8 +57,8 @@
     }
 
     interface ValueMap {
-      label : string;
-      value : string;
+      label: string;
+      value: string;
     }
 
     interface App {
@@ -75,12 +75,12 @@
       components: {
         TestTable,
         UpdateDialog,
-        RigionSelector
+        RigionSelector,
       },
     })
     export default class QueryPage extends Vue {
 
-      public dialogFormVisible: boolean = true;
+      public dialogUpdateVisible: boolean = true;
       public formInline: UserForm = {
         userName: '',
         personalPlan: '',
@@ -96,12 +96,15 @@
       };
       public pickerOptions0: any= {
         disabledDate(time: any) {
-          return time.getTime() > Date.now() - 8.64e6
+          return time.getTime() > Date.now() - 8.64e6;
         }
-      };      
+      };     
       public onSubmit(): void {
         console.log('submit!');
       };
+      public handleUpdateClose(): void {
+        this.dialogUpdateVisible = false;
+      }
     }
 </script>
 

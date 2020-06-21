@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisible" :before-close="handleUpdateClose">
         <el-form :model="form">
             <el-form-item label="姓名" :label-width="formLabelWidth">
                 <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -60,8 +60,8 @@
         </el-form>
         <RigionSelector :avalueProvince = "form.address.province" :avalueCity = "form.address.city" :avalueOrigin = "form.address.origin"/>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button @click="handleUpdateClose">取 消</el-button>
+            <el-button type="primary" @click="handleUpdateClose">确 定</el-button>
         </div>
     </el-dialog>
 </template>
@@ -94,7 +94,7 @@ interface User{
 })
 export default class UpdateDialog extends Vue { 
   
-    @Prop({ default: true }) 
+    @Prop() 
     dialogFormVisible!: boolean;
     form: User={
         name: '',
@@ -119,7 +119,11 @@ export default class UpdateDialog extends Vue {
         disabledDate(time: any) {
             return time.getTime() > Date.now() - 8.64e6
         }
-    };  
+    };
+    
+    handleUpdateClose(){
+        this.$emit('handleUpdateClose')
+    }
 }
 </script>
 <style></style>
