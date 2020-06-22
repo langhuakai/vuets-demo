@@ -48,14 +48,20 @@
     }
 
     // 用户信息表单接口
-    interface UserForm {
+    interface UserInfo {
+      id: number;
       userName: string;
-      personalPlan: string;
+      sex: string;
+      age: number;
+      email: string;
+      phone: string;
       entryDate: string;
-      address: Address;
-      valueProvince: string; // 所选的省
-      valueCity: string; // 所选的市
-      valueOrigin: string; // 所选的区
+      personalPlans: string[];
+      companyAddress: Address;
+      // address: Address;
+      // valueProvince: string; // 所选的省
+      // valueCity: string; // 所选的市
+      // valueOrigin: string; // 所选的区
     }
 
     // label和value对应接口
@@ -82,18 +88,23 @@
     export default class QueryPage extends Vue {
       
       public dialogUpdateVisible: boolean = true;
-      public formInline: UserForm = {
+      public formInline: UserInfo = {
+        id: 0,
         userName: '',
-        personalPlan: '',
+        sex: '',
+        age: 0,
+        email: '',
+        phone: '',
         entryDate: '',
-        address: {
+        personalPlans: [],
+        companyAddress: {
           province: '',
           city: '',
           origin: '',
         },
-        valueProvince: '', // 所选的省
-        valueCity: '', // 所选的市
-        valueOrigin: '', // 所选的区
+        // valueProvince: '', // 所选的省
+        // valueCity: '', // 所选的市
+        // valueOrigin: '', // 所选的区
       };
       public pickerOptions0: any= {
         disabledDate(time: any) {
@@ -106,20 +117,20 @@
 
       public resetForm(): void{
         this.formInline= {
-        userName: '',
-        personalPlan: '',
-        entryDate: '',
-        address: {
-          province: '',
-          city: '',
-          origin: '',
-        },
-        valueProvince: '', // 所选的省
-        valueCity: '', // 所选的市
-        valueOrigin: '', // 所选的区
+          userName: '',
+          personalPlan: '',
+          entryDate: '',
+          address: {
+            province: '',
+            city: '',
+            origin: '',
+          },
+          valueProvince: '', // 所选的省
+          valueCity: '', // 所选的市
+          valueOrigin: '', // 所选的区
+        };
+       // this.$refs.rigionSelector.clear();
       };
-      this.$refs.rigionSelector.clear();
-      }
       // 保存框关闭事件
       public handleUpdateClose(): void {
         this.dialogUpdateVisible = false;

@@ -42,6 +42,15 @@
           sortable
           label="个人简历">
         </el-table-column>
+        <el-table-column
+          label="操作"
+          width="100">
+          <template slot-scope="scope">
+            <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination class="fy"
                      layout="prev, pager, next"
@@ -261,6 +270,10 @@
 
       current_change(currentPage : number){
         this.currentPage = currentPage;
+      };
+
+      handleClick(row: any) {
+        console.log(row);
       };
       created(){
         this.total= this.tableData.length;
