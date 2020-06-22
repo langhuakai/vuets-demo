@@ -26,6 +26,7 @@
     <div class="center">
       <el-button type="primary" @click="submitForm('numberValidateForm')">提交</el-button>
       <el-button @click="resetForm('numberValidateForm')">重置</el-button>
+      <el-button @click="get">发送请求</el-button>
     </div>
     <TestTable></TestTable>
     <UpdateDialog :dialogFormVisible= "dialogUpdateVisible"  @handleUpdateClose="handleUpdateClose"/>
@@ -46,6 +47,7 @@
       origin: string;
     }
 
+    // 用户信息表单接口
     interface UserForm {
       userName: string;
       personalPlan: string;
@@ -56,19 +58,18 @@
       valueOrigin: string; // 所选的区
     }
 
+    // label和value对应接口
     interface ValueMap {
       label: string;
       value: string;
     }
 
-    interface App {
-      appname: string;
-      apkname: string;
+    // 请求封装接口
+    interface Config{
       type: string;
-      comp_name: string;
-      type_number: string;
-      update_date: string;
-      download_num: string;
+      url: string;
+      data?:string;
+      dataType:string;
     }
 
     @Component({
@@ -79,7 +80,7 @@
       },
     })
     export default class QueryPage extends Vue {
-
+      
       public dialogUpdateVisible: boolean = true;
       public formInline: UserForm = {
         userName: '',
@@ -102,10 +103,51 @@
       public onSubmit(): void {
         console.log('submit!');
       };
+
+      public resetForm(): void{
+        this.formInline= {
+        userName: '',
+        personalPlan: '',
+        entryDate: '',
+        address: {
+          province: '',
+          city: '',
+          origin: '',
+        },
+        valueProvince: '', // 所选的省
+        valueCity: '', // 所选的市
+        valueOrigin: '', // 所选的区
+      };
+      this.$refs.rigionSelector.clear();
+      }
+      // 保存框关闭事件
       public handleUpdateClose(): void {
         this.dialogUpdateVisible = false;
+      };
+
+      // ajax请求封装
+      public ajax(config: Config){
+        let xhr = new XMLHttpRequest();
+        xhr.open(config.type, config.url, true);
+        xhr.send(config.data);
+        xhr.onreadystatechange = function (){
+          if(xhr.readyState == 4 && xhr.status == 200){
+            console.log('success')
+          }
+        }
+      };
+
+      // 获取用户数据
+      public get(){
+        this.ajax({
+          type: 'get',
+          url: '/api/queryUsers',
+          data: JSON.stringify(this.formInline),
+          dataType: 'json'
+        });
       }
     }
+      
 </script>
 
 <style scoped>

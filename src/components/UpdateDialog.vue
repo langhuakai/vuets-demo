@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisible" :before-close="handleUpdateClose">
+    <el-dialog title="基础信息" :visible.sync="dialogFormVisible" :before-close="handleUpdateClose">
         <el-form :model="form">
             <el-form-item label="姓名" :label-width="formLabelWidth">
                 <el-input v-model="form.name" autocomplete="off"></el-input>
