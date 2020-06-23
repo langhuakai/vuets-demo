@@ -1,6 +1,6 @@
 <template>
   <div class="title">
-    <span>总数量：3223个</span>
+    <span>总数量：{{tablePageInfo.total}}个</span>
     <div class="container_table">
       <el-table
         :data="tablePageInfo.users"
@@ -54,7 +54,7 @@
       </el-table>
       <el-pagination class="fy"
                      layout="prev, pager, next"
-                     @current-change="current_change"
+                     @current-change="currentChange"
                      :total="tablePageInfo.total"
                      background
       >
@@ -128,7 +128,8 @@
 
       };
 
-      current_change(currentPage : number){
+      @Emit('currentChange')
+      currentChange(currentPage : number){
         this.currentPage = currentPage;
       };
 

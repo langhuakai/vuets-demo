@@ -31,7 +31,7 @@
       <el-button @click="foundUser">查找用户</el-button>
       
     </div>
-    <TestTable :pageInfo= "pageInfo" @handleUpdateOpen="handleUpdateOpen"/>
+    <TestTable :pageInfo= "pageInfo" @handleUpdateOpen="handleUpdateOpen" @currentChange= "currentChange"/>
     <UpdateDialog ref= "updataDialog" :dialogFormVisible= "dialogUpdateVisible"  @handleUpdateClose="handleUpdateClose"/>
   </div>
 </template>
@@ -183,6 +183,11 @@
         this.$refs.updateDialog.handleParentChanged(row);
       };
 
+      public currentChange(currentPage: number) {
+        this.pageNum = currentPage;
+        this.foundUser();
+      }
+
       // ajax请求封装
       public ajax(config: Config){
         let xhr = new XMLHttpRequest();
@@ -279,7 +284,7 @@
            pageNum: that.pageNum,
            pageSize: that.pageSize,
            userName: that.formInline.userName,
-           personalPlans: that.formInline.personalPlans,
+           personalPlans: that.formInline.personalPlans.join(),
            entryDate: that.formInline.entryDate,
            province: '',
            city: '',
