@@ -1,11 +1,11 @@
 <template>
-    <el-dialog title="基础信息" :visible.sync="dialogFormVisible" :before-close="handleUpdateClose">
+    <el-dialog title="基础信息" :visible.sync="dialogVisible" :before-close="handleUpdateClose">
         <el-form :model="form">
             <el-form-item label="姓名" :label-width="formLabelWidth">
-                <el-input v-model="form.name" autocomplete="off"></el-input>
+                <el-input v-model="form.userName" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="性别" :label-width="formLabelWidth">
-                <el-select v-model="form.region">
+                <el-select v-model="form.sex">
                     <el-option label="男" value="男"></el-option>
                     <el-option label="女" value="女"></el-option>
                 </el-select>
@@ -18,7 +18,7 @@
                 { type: 'number', message: '年龄必须为数字值'}
                 ]"
             >
-                <el-input type="age" v-model.number="numberValidateForm.age" autocomplete="off"></el-input>
+                <el-input type="age" v-model.number="form.age" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="入职日期">
                 <el-date-picker
@@ -50,7 +50,7 @@
                 </el-input>
             </el-form-item>
             <el-form-item  label="个人定位" :label-width="formLabelWidth">
-                <el-checkbox-group v-model="form.personalLocation">
+                <el-checkbox-group v-model="form.personalPlans">
                     <el-checkbox label="技术型"></el-checkbox>
                     <el-checkbox label="业务型"></el-checkbox>
                     <el-checkbox label="营销型"></el-checkbox>
@@ -58,7 +58,7 @@
                 </el-checkbox-group>
             </el-form-item>
         </el-form>
-        <RigionSelector :avalueProvince = "form.address.province" :avalueCity = "form.address.city" :avalueOrigin = "form.address.origin"/>
+        <RigionSelector :avalueProvince = "form.companyAddress.province" :avalueCity = "form.companyAddress.city" :avalueOrigin = "form.companyAddress.origin"/>
         <div slot="footer" class="dialog-footer">
             <el-button @click="handleUpdateClose">取 消</el-button>
             <el-button type="primary" @click="handleUpdateClose">确 定</el-button>
@@ -66,7 +66,7 @@
     </el-dialog>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import RigionSelector from "./RigionSelector.vue";
 
 interface Address {
@@ -75,17 +75,22 @@ interface Address {
     origin: string;
 }
 
-interface User{
-    date: string;
-    name: string;
-    address: Address;
-    age: string;
-    entryDate: string;
-    email: string;
-    phone: string;
-    personalPlan: string;
-    personalLocation: string[];
-}
+// 用户信息表单接口
+    interface UserInfo {
+      id: number;
+      userName: string;
+      sex: string;
+      age: number;
+      email: string;
+      phone: string;
+      entryDate: string;
+      personalPlans: string[];
+      companyAddress: Address;
+      // address: Address;
+      // valueProvince: string; // 所选的省
+      // valueCity: string; // 所选的市
+      // valueOrigin: string; // 所选的区
+    }
 
 @Component({
     components: {
@@ -96,20 +101,21 @@ export default class UpdateDialog extends Vue {
   
     @Prop() 
     dialogFormVisible!: boolean;
-    form: User={
-        name: '',
-        date:'',
-        address: {
-            province: '',
-            city: '',
-            origin: ''
-        },
-        age:'',
-        entryDate: '',
-        email: '',
-        phone: '',
-        personalPlan: '',
-        personalLocation: [],
+    dialogVisible = this.dialogFormVisible;
+    form: UserInfo={
+      id: 0,
+      userName: '',
+      sex: '',
+      age: 0,
+      email: '',
+      phone: '',
+      entryDate: '',
+      personalPlans: [],
+      companyAddress: {
+        province: '',
+        city: '',
+        origin: '',
+      }
     };
     public formLabelWidth: string= '120px';
     public numberValidateForm: any= {
@@ -123,6 +129,11 @@ export default class UpdateDialog extends Vue {
     
     handleUpdateClose(){
         this.$emit('handleUpdateClose')
+    }
+
+    @Watch('dialogFormVisible')
+    onDialogFormVisibleChanged(newValue: boolean, oldValue: boolean) {
+        this.dialogVisible = newValue;
     }
 }
 </script>
