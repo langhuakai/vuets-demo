@@ -127,8 +127,12 @@ export default class UpdateDialog extends Vue {
         }
     };
     
-    handleUpdateClose(){
+    public handleUpdateClose(){
         this.$emit('handleUpdateClose')
+    }
+
+    public handleParentChanged(userInfo: UserInfo) {
+        this.form = userInfo;
     }
 
     @Watch('dialogFormVisible')

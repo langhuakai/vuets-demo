@@ -3,7 +3,7 @@
     <span>总数量：3223个</span>
     <div class="container_table">
       <el-table
-        :data="users"
+        :data="tablePageInfo.users"
         stripe
         style="width: 100%"
         :default-sort = "{prop: 'date', order: 'descending'}"
@@ -55,7 +55,7 @@
       <el-pagination class="fy"
                      layout="prev, pager, next"
                      @current-change="current_change"
-                     :total="total"
+                     :total="tablePageInfo.total"
                      background
       >
       </el-pagination>
@@ -89,6 +89,14 @@
       // valueOrigin: string; // 所选的区
     }
 
+    // 分页参数接口
+    interface PageInfo{
+      currentPage: number;
+      pageSize: number;
+      total: number;
+      users: UserInfo[];
+    }
+
     @Component
     export default class TestTable extends Vue {
       public total: number = 1000;//默认数据总数
@@ -101,25 +109,18 @@
       @Prop({ default: () => [] })
       users!: UserInfo[];
 
-      public tableUsers: UserInfo[] =this.users;
+      @Prop({
+        default: () => {
+          currentPage: 1;
+          pageSize: 10;
+          total: 0;
+          users: [];
+        }
+      })
+      pageInfo!: PageInfo;
 
-      // public users: UserInfo[] = [
-      //   {
-      //     id: 0,
-      //     userName: 'wei',
-      //     sex: '男',
-      //     age: 24,
-      //     email: 'aaa@qq.com',
-      //     phone: '13322222222',
-      //     entryDate: '2020-06-20',
-      //     personalPlans: ['技术型', '营销型'],
-      //     companyAddress: {
-      //       province: '江西省',
-      //       city: '鹰潭市',
-      //       origin: '贵溪市'
-      //     }
-      //   },
-      // ];
+      public tableUsers: UserInfo[] =this.users;
+      public tablePageInfo: PageInfo = this.pageInfo
 
 
       switchChange(){
@@ -142,6 +143,7 @@
       @Emit('handleUpdateOpen') 
       handleEditClick(row: any) {
         console.log('----------------执行TestTable中的打开方法------------------')
+        console.log(row)
       }
 
       handleEditClick2(row: any) {
@@ -151,11 +153,46 @@
       @Watch('users')
       onDialogFormVisibleChanged(newValue: UserInfo[], oldValue: UserInfo[]) {
         this.users = newValue;
-    }
+      }
+
+      @Watch('pageInfo')
+      onTablePageInfoChanged(newValue: PageInfo, oldValue: PageInfo) {
+        this.tablePageInfo = newValue;
+      }
 
       created(){
         this.total= this.users.length;
       };
+
+
+
+    //   handleSizeChange (size: number) {
+    //     this.pageSize = size;
+    //     console.log(this.pageSize);  //每页下拉显示数据
+    //     this.showTable(this.currentPage,this.pageSize);
+    //   },
+    //   handleCurrentChange(currentPage: number){
+    //     this.currentPage = currentPage;
+    //     console.log(this.currentPage);  //点击第几页
+    //     this.showTable(this.currentPage,this.pageSize);
+
+    //   },
+    //   showTable(currentPage,pageSize){
+    //     this.listLoading = true;
+    //     this.$axios({
+    //       method: "POST",
+    //       url: "http://localhost:8080/api/pagingQuery",
+    //       changeOrigin: true,
+    //       data: {
+    //         "start":currentPage,
+    //         "pageSize":pageSize
+    //       }
+    //     }).then(result => {
+    //       this.listLoading = false;
+    //       this.showData = result.data;
+    //     });
+    //   }
+    // },
     }
 </script>
 

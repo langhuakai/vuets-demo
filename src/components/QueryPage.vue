@@ -31,8 +31,8 @@
       <el-button @click="foundUser">查找用户</el-button>
       
     </div>
-    <TestTable :users= "users" @handleUpdateOpen="handleUpdateOpen"/>
-    <UpdateDialog :dialogFormVisible= "dialogUpdateVisible"  @handleUpdateClose="handleUpdateClose"/>
+    <TestTable :pageInfo= "pageInfo" @handleUpdateOpen="handleUpdateOpen"/>
+    <UpdateDialog ref= "updataDialog" :dialogFormVisible= "dialogUpdateVisible"  @handleUpdateClose="handleUpdateClose"/>
   </div>
 </template>
 
@@ -81,6 +81,14 @@
       dataType:string;
     }
 
+    // 分页参数接口
+    interface PageInfo{
+      currentPage: number;
+      pageSize: number;
+      total: number;
+      users: UserInfo[];
+    }
+
     @Component({
       components: {
         TestTable,
@@ -89,8 +97,15 @@
       },
     })
     export default class QueryPage extends Vue {
+      public $refs!: {
+        rigionSelector: RigionSelector,
+        updateDialog: UpdateDialog
+      }
       
       public dialogUpdateVisible: boolean = true;
+      public pageNum: number = 1;
+      public pageSize: number = 10;
+      // 用户信息实例
       public formInline: UserInfo = {
         id: 2,
         userName: '',
@@ -105,16 +120,22 @@
           city: '',
           origin: '',
         },
-        // valueProvince: '', // 所选的省
-        // valueCity: '', // 所选的市
-        // valueOrigin: '', // 所选的区
       };
       public users: UserInfo[] = [];
+      // 分页参数封装实例
+      public pageInfo: PageInfo = {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+        users: []
+      };
       public pickerOptions0: any= {
         disabledDate(time: any) {
           return time.getTime() > Date.now() - 8.64e6;
         }
-      };     
+      };
+
+     // $refs: {rigionSelector: HTMLFormElement};     
       public submitForm(): void {
         console.log(this.formInline);
         let that = this;
@@ -146,7 +167,8 @@
           // valueCity: '', // 所选的市
           // valueOrigin: '', // 所选的区
         };
-       // this.$refs.rigionSelector.clear();
+        this.$refs.rigionSelector.clear();
+       // (this.$refs.rigionSelector as HTMLElement).clientWidth
       };
       // 保存框关闭事件
       public handleUpdateClose(): void {
@@ -155,9 +177,10 @@
       };
 
       // 保存框打开事件
-      public handleUpdateOpen(): void {
+      public handleUpdateOpen(row: UserInfo): void {
         console.log('--------调用queryPage中的handleUpdateOpen方法-----------------')
         this.dialogUpdateVisible = true;
+        this.$refs.updateDialog.handleParentChanged(row);
       };
 
       // ajax请求封装
@@ -246,13 +269,15 @@
         
         axios({
           method: 'get',
-          url: '/api/queryUsers',
+          url: '/api/testPageHelper2',
           
           // get
          // params: {"personalPlans": personalPlans}
          // params: JSON.stringify(personalPlans)
          //params: {'personalPlan': personalPlans}
          params: {
+           pageNum: that.pageNum,
+           pageSize: that.pageSize,
            userName: that.formInline.userName,
            personalPlans: that.formInline.personalPlans,
            entryDate: that.formInline.entryDate,
@@ -267,7 +292,10 @@
         }).then((res) => {
           console.log('--------------------数据返回---------------');
           console.log(res.data);
-          that.users = res.data;
+          that.pageInfo.users = res.data.list;
+          that.pageInfo.total = res.data.total;
+          that.pageInfo.currentPage = that.pageNum;
+          that.pageInfo.pageSize = that.pageSize;
         })
       };
 
