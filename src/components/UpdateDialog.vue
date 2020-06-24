@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="基础信息" :visible.sync="dialogVisible" :before-close="handleUpdateClose">
+    <el-dialog title="基础信息" :visible.sync="dialogVisible" :before-close="handleUpdateClose" open="onDialogOpen">
         <el-form :model="form">
             <el-form-item label="姓名" :label-width="formLabelWidth">
                 <el-input v-model="form.userName" autocomplete="off"></el-input>
@@ -58,10 +58,10 @@
                 </el-checkbox-group>
             </el-form-item>
         </el-form>
-        <RigionSelector :avalueProvince = "form.companyAddress.province" :avalueCity = "form.companyAddress.city" :avalueOrigin = "form.companyAddress.origin"/>
+        <RigionSelector ref="rigionSelector" :componentAddress= "this.form.companyAddress"/>
         <div slot="footer" class="dialog-footer">
             <el-button @click="handleUpdateClose">取 消</el-button>
-            <el-button type="primary" @click="handleUpdateClose">确 定</el-button>
+            <el-button type="primary" @click="handleUpdateConfirm">确 定</el-button>
         </div>
     </el-dialog>
 </template>
@@ -86,10 +86,6 @@ interface Address {
       entryDate: string;
       personalPlans: string[];
       companyAddress: Address;
-      // address: Address;
-      // valueProvince: string; // 所选的省
-      // valueCity: string; // 所选的市
-      // valueOrigin: string; // 所选的区
     }
 
 @Component({
@@ -99,8 +95,17 @@ interface Address {
 })
 export default class UpdateDialog extends Vue { 
   
+    public $refs!: {
+        rigionSelector: RigionSelector,
+        
+    }
     @Prop() 
     dialogFormVisible!: boolean;
+
+    operateType: number = 1;  //操作类型   1：修改  2：新增
+
+    componentOperateType = this.operateType;
+
     dialogVisible = this.dialogFormVisible;
     form: UserInfo={
       id: 0,
@@ -131,12 +136,61 @@ export default class UpdateDialog extends Vue {
         this.$emit('handleUpdateClose')
     }
 
-    public handleParentChanged(userInfo: UserInfo) {
-        this.form = userInfo;
+    public onDialogOpen() {
+        this.$refs.rigionSelector.changeProvince(this.form.companyAddress.province);
+        this.$refs.rigionSelector.changeCity(this.form.companyAddress.city);
+        this.$refs.rigionSelector.changeOrigin(this.form.companyAddress.origin);
     }
 
+    public handleUpdateConfirm() {
+        let companyAddress = {
+            province: '',
+            city: '',
+            origin: ''
+        };
+        companyAddress.province = this.$refs.rigionSelector.address.province;
+        companyAddress.city = this.$refs.rigionSelector.address.city;
+        companyAddress.origin = this.$refs.rigionSelector.address.origin;
+        this.form.companyAddress = companyAddress;
+
+        console.log('------------------进入UpdateDialog的handleUpdateConfirm方法-----------------------')
+        console.log(this.form)
+
+        if(this.operateType === 1) {
+            console.log('进入修改方法条件中')
+            this.$emit('handleUpdateConfirm', this.form);
+        } else if(this.operateType === 2) {
+            console.log('进入新增方法条件中')
+            this.$emit('handleAddConfirm', this.form);
+        }
+    }
+
+    public handleParentChanged(userInfo: UserInfo) {
+        this.form = userInfo;
+        this.$refs.rigionSelector.changeProvince(this.form.companyAddress.province);
+        this.$refs.rigionSelector.changeCity(this.form.companyAddress.city);
+    }
+
+    public clear() {
+        this.form = {
+            id: 0,
+            userName: '',
+            sex: '',
+            age: 0,
+            email: '',
+            phone: '',
+            entryDate: '',
+            personalPlans: [],
+            companyAddress: {
+                province: '',
+                city: '',
+                origin: '',
+            }
+        }
+    };
+
     @Watch('dialogFormVisible')
-    onDialogFormVisibleChanged(newValue: boolean, oldValue: boolean) {
+    public onDialogFormVisibleChanged(newValue: boolean, oldValue: boolean) {
         this.dialogVisible = newValue;
     }
 }

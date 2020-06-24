@@ -34,6 +34,7 @@
           label="入职日期">
         </el-table-column>
         <el-table-column
+          :formatter="personalPlansFormatter"
           prop="personalPlans"
           label="个人规划">
         </el-table-column>
@@ -122,6 +123,9 @@
       public tableUsers: UserInfo[] =this.users;
       public tablePageInfo: PageInfo = this.pageInfo
 
+      public personalPlansFormatter(row: UserInfo, column: any, cellValue: any, index: any){
+        return row.personalPlans.join();
+      }
 
       switchChange(){
         this.istag = !this.istag ;
@@ -149,6 +153,15 @@
 
       handleEditClick2(row: any) {
         console.log('----------------执行打开方法------------------')
+      }
+      handleDeleteClick(row: UserInfo) {
+        console.log('-------------------执行TestTable中的handleDeleteClick方法--------------------------')
+        this.$emit('onDeleteClick', row.id)
+      }
+
+
+      getPersonalPlans(personalPlans: string[]) {
+        return personalPlans.join()
       }
 
       @Watch('users')

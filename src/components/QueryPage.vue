@@ -21,18 +21,18 @@
         </el-date-picker>
       </el-form-item>      
     </el-form>
-    <RigionSelector ref="rigionSelector"/>
+    <RigionSelector ref="rigionSelector" :componentAddress= "formInline.companyAddress"/>
 
     <div class="center">
-      <el-button type="primary" @click="submitForm('numberValidateForm')">查询</el-button>
+      <el-button type="primary" @click="onQueryClicked('numberValidateForm')">查询</el-button>
       <el-button @click="resetForm('numberValidateForm')">重置</el-button>
-      <el-button @click="onSubmit">发送请求</el-button>
-      <el-button @click="addUser">新增用户</el-button>
-      <el-button @click="foundUser">查找用户</el-button>
+      <el-button @click="onAddClick('numberValidateForm')">新曾用户</el-button>
+      
       
     </div>
-    <TestTable :pageInfo= "pageInfo" @handleUpdateOpen="handleUpdateOpen" @currentChange= "currentChange"/>
-    <UpdateDialog ref= "updataDialog" :dialogFormVisible= "dialogUpdateVisible"  @handleUpdateClose="handleUpdateClose"/>
+    <TestTable :pageInfo= "pageInfo" @handleUpdateOpen="handleUpdateOpen" @currentChange= "currentChange" @onDeleteClick= "onDeleteClick"/>
+    <UpdateDialog ref= "updateDialog" :dialogFormVisible= "dialogUpdateVisible" 
+        @handleUpdateConfirm="handleUpdateConfirm" @handleUpdateClose="handleUpdateClose" @handleAddConfirm= "handleAddConfirm"/>
   </div>
 </template>
 
@@ -61,10 +61,6 @@
       entryDate: string;
       personalPlans: string[];
       companyAddress: Address;
-      // address: Address;
-      // valueProvince: string; // 所选的省
-      // valueCity: string; // 所选的市
-      // valueOrigin: string; // 所选的区
     }
 
     // label和value对应接口
@@ -93,16 +89,17 @@
       components: {
         TestTable,
         UpdateDialog,
-        RigionSelector,
+        RigionSelector
       },
     })
     export default class QueryPage extends Vue {
       public $refs!: {
+        updateDialog: UpdateDialog,
         rigionSelector: RigionSelector,
-        updateDialog: UpdateDialog
+        
       }
       
-      public dialogUpdateVisible: boolean = true;
+      public dialogUpdateVisible: boolean = false;
       public pageNum: number = 1;
       public pageSize: number = 10;
       // 用户信息实例
@@ -135,7 +132,6 @@
         }
       };
 
-     // $refs: {rigionSelector: HTMLFormElement};     
       public submitForm(): void {
         console.log(this.formInline);
         let that = this;
@@ -163,12 +159,8 @@
             city: '',
             origin: '',
           },
-          // valueProvince: '', // 所选的省
-          // valueCity: '', // 所选的市
-          // valueOrigin: '', // 所选的区
         };
         this.$refs.rigionSelector.clear();
-       // (this.$refs.rigionSelector as HTMLElement).clientWidth
       };
       // 保存框关闭事件
       public handleUpdateClose(): void {
@@ -176,8 +168,21 @@
         this.dialogUpdateVisible = false;
       };
 
+      // 信息框修改事件
+      public handleUpdateConfirm(form: UserInfo) {
+        console.log('---------------------进入QueryPage的handleUpdateConfirm方法--------------------------');
+        console.log(form);
+        this.updateUser(form);
+      }
+      // 信息框新增事件
+      public handleAddConfirm(form: UserInfo) {
+        console.log('---------------------进入QueryPage的handleAddConfirm方法--------------------------');
+        console.log(form);
+        this.addUser(form);
+      }
+
       // 保存框打开事件
-      public handleUpdateOpen(row: UserInfo): void {
+      public handleUpdateOpen(row: UserInfo) {
         console.log('--------调用queryPage中的handleUpdateOpen方法-----------------')
         this.dialogUpdateVisible = true;
         this.$refs.updateDialog.handleParentChanged(row);
@@ -231,37 +236,35 @@
         axios({
           method: 'get',
           url: '/api/queryUsers2',
-          
-          // get
-         // params: {"personalPlans": personalPlans}
-         // params: JSON.stringify(personalPlans)
-         //params: {'personalPlan': personalPlans}
-         //params: {personalPlans}
-         // post
-         // params: personalPlans
-         // params: personalPlans.toString
         }).then((res) => {
           that.formInline = res.data.list;
         })
       };
 
-      public addUser(): void {
+      public onAddClick() {
+        this.$refs.updateDialog.clear();
+        this.$refs.updateDialog.operateType = 2;
+        this.dialogUpdateVisible = true;
+      }
+
+      public onDeleteClick(id: number) {
+        this.deleteUser(id);
+      }
+
+      public onQueryClicked() {
+        this.pageNum = 1;
+        this.foundUser();
+      }
+
+      public addUser(form: UserInfo) {
         console.log('-------------新增用户------------');
-        let useradd = {
-          userName: 'wei',
-          email: 'wei@qq.com'
-        }
         axios({
           method: 'put',
           url: '/api/insertUser',
-          
-          // get
-         // params: {"personalPlans": personalPlans}
-         // params: JSON.stringify(personalPlans)
-         data: useradd,
-         // post
-         // params: personalPlans
-         // params: personalPlans.toString
+          data: JSON.stringify(form),
+          headers: {
+            'Content-Type': 'application/json'
+          },
         }).then((res) => {
          // that.formInline = res.data.list;
         })
@@ -271,29 +274,23 @@
         console.log('submit!');
         console.log(this.formInline);
         let that = this;
+        console.log('----------------打印plansjoin-------------------')
+        console.log(this.formInline.personalPlans.join())
         
         axios({
           method: 'get',
           url: '/api/testPageHelper2',
-          
-          // get
-         // params: {"personalPlans": personalPlans}
-         // params: JSON.stringify(personalPlans)
-         //params: {'personalPlan': personalPlans}
-         params: {
-           pageNum: that.pageNum,
-           pageSize: that.pageSize,
-           userName: that.formInline.userName,
-           personalPlans: that.formInline.personalPlans.join(),
-           entryDate: that.formInline.entryDate,
-           province: '',
-           city: '',
-           origin: ''
+          params: {
+            pageNum: that.pageNum,
+            pageSize: that.pageSize,
+            userName: that.formInline.userName,
+            personalPlans: that.formInline.personalPlans.join(),
+            entryDate: that.formInline.entryDate,
+            province: '',
+            city: '',
+            origin: ''
 
-         }
-         // post
-         // params: personalPlans
-         // params: personalPlans.toString
+          }
         }).then((res) => {
           console.log('--------------------数据返回---------------');
           console.log(res.data);
@@ -303,6 +300,36 @@
           that.pageInfo.pageSize = that.pageSize;
         })
       };
+
+      public updateUser(form: UserInfo) {
+        let that = this;
+        console.log('-----------------进入QueryPage的updateUser方法------------------------')
+        axios({
+          method: 'post',
+          url: '/api/updateUser',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          
+         data: JSON.stringify(form)
+        }).then((res) => {
+          console.log('--------------------修改数据成功---------------');
+          this.dialogUpdateVisible = false;
+        })
+      };
+
+      public deleteUser(id: number) {
+        axios({
+          method: 'delete',
+          url: '/api/deleteUser',
+          params: {
+            id: id
+          }
+        }).then((res) => {
+          console.log('--------------------修改数据成功---------------');
+          this.dialogUpdateVisible = false;
+        })
+      }
 
     };
       

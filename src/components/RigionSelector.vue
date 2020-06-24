@@ -1,7 +1,7 @@
 <template>
   <div>
       <span label="省">省：
-        <el-select v-model="valueProvince"
+        <el-select v-model="address.province"
                    placeholder="请选择省"
                    @change="changeProvince">
           <el-option
@@ -13,7 +13,7 @@
         </el-select>
       </span>
       <span label="市">市：
-        <el-select v-model="valueCity"
+        <el-select v-model="address.city"
                    placeholder="请选择市"
                    @change="changeCity">
           <el-option
@@ -25,7 +25,7 @@
         </el-select>
       </span>
       <span label="区">区：
-        <el-select v-model="valueOrigin"
+        <el-select v-model="address.origin"
                    placeholder="请选择区"
                    @change="changeOrigin">
           <el-option
@@ -39,7 +39,7 @@
     </div>
 </template>
 <script lang= "ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
   import RigionSelector from "./RigionSelector.vue";
 
   interface Area {
@@ -71,7 +71,15 @@
 @Component
 export default class RegionSelector extends Vue {
 
-
+      @Prop({
+        default: () => {
+          province: '';
+          city: '';
+          origin: '';
+        }
+      })
+      componentAddress!: Address;
+      public address: Address = this.componentAddress;
       public valueProvince: string = '';// 所选的省
       public valueCity: string = ''; // 所选的市
       public valueOrigin: string = ''; // 所选的区
@@ -95,9 +103,9 @@ export default class RegionSelector extends Vue {
          this.provinceList.forEach((province, index) => {
            if (val.toString() === this.provinceList[index].value) {
              this.cityOptions = this.provinceList[index].children
-             this.valueCity = this.provinceList[index].children[0].value
-             this.originOptions = this.provinceList[index].children[0].children
-             this.valueOrigin = this.provinceList[index].children[0].children[0].value
+            // this.originOptions = this.provinceList[index].children[0].children
+            // this.address.city = this.provinceList[index].children[0].value
+            // this.address.origin = this.provinceList[index].children[0].children[0].value
            }
          })
       };
@@ -106,13 +114,13 @@ export default class RegionSelector extends Vue {
         this.cityList.forEach((city, index) => {
           if (val.toString() === this.cityList[index].value) {
             this.originOptions = this.cityList[index].children
-            this.valueOrigin = this.cityList[index].children[0].value
+           // this.address.origin = this.cityList[index].children[0].value
           }
         })
       };
       // 选择区
       changeOrigin(val: string) {
-        this.valueOrigin = val
+        this.address.origin = val
       };
       public _getJsonData() {
         console.log("-----------------------开始解析");
@@ -163,6 +171,11 @@ export default class RegionSelector extends Vue {
           this.valueProvince= '';// 所选的省
           this.valueCity= ''; // 所选的市
           this.valueOrigin= ''; // 所选的区
+      }
+
+      @Watch('componentAddress')
+      onComponentAddressChanged(newValue: Address, oldValue: Address) {
+        this.address = newValue;
       }
   
 }
