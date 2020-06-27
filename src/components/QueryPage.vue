@@ -26,7 +26,7 @@
     <div class="center">
       <el-button type="primary" @click="onQueryClicked('numberValidateForm')">查询</el-button>
       <el-button @click="resetForm('numberValidateForm')">重置</el-button>
-      <el-button @click="onAddClick('numberValidateForm')">新曾用户</el-button>
+      <el-button @click="onAddClick('numberValidateForm')">新增用户</el-button>
       
       
     </div>
@@ -267,6 +267,8 @@
           },
         }).then((res) => {
          // that.formInline = res.data.list;
+         console.log('------------------插入数据返回--------------------')
+         console.log(res)
         })
       };
 
