@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '../views/Home.vue';
-import QueryPage from '../components/QueryPage.vue';
+import QueryPage from '../views/QueryPage.vue';
 
 Vue.use(VueRouter);
 

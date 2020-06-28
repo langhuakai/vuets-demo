@@ -4,7 +4,7 @@
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
-import QueryPage from './components/QueryPage.vue'
+import QueryPage from './views/QueryPage.vue'
 import TestTable from './components/TestTable.vue'
 import UpdateDialog from './components/UpdateDialog.vue'
 import Element from 'element-ui'

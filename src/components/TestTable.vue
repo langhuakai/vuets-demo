@@ -30,6 +30,7 @@
         </el-table-column>
         <el-table-column
           prop="entryDate"
+          value-format = "yyyy-MM-dd" 
           sortable
           label="入职日期">
         </el-table-column>
@@ -49,7 +50,7 @@
           <template slot-scope="scope">
             <el-button @click="handleLookClick(scope.row)" type="text" size="small">查看</el-button>
             <el-button @click="handleEditClick(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="handleDeleteClick(scope.row)" type="text" size="small">删除</el-button>
+            <el-button @click="handleDeleteClick(scope.$index, scope.row)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -83,11 +84,8 @@
       phone: string;
       entryDate: string;
       personalPlans: string[];
+      personalDesign: string;
       companyAddress: Address;
-      // address: Address;
-      // valueProvince: string; // 所选的省
-      // valueCity: string; // 所选的市
-      // valueOrigin: string; // 所选的区
     }
 
     // 分页参数接口
@@ -119,6 +117,7 @@
         }
       })
       pageInfo!: PageInfo;
+
 
       public tableUsers: UserInfo[] =this.users;
       public tablePageInfo: PageInfo = this.pageInfo
@@ -154,9 +153,18 @@
       handleEditClick2(row: any) {
         console.log('----------------执行打开方法------------------')
       }
-      handleDeleteClick(row: UserInfo) {
+      handleDeleteClick(index: number, row: UserInfo) {
         console.log('-------------------执行TestTable中的handleDeleteClick方法--------------------------')
-        this.$emit('onDeleteClick', row.id)
+        this.$emit('onDeleteClick', row, index)
+      }
+
+      // 删除行
+      deleteRow(index: number) {
+        if (index === null) {
+          console.log('-------------------删除失败-----------------------')
+        } else {
+          this.tablePageInfo.users.splice(index, 1)
+        }
       }
 
 
@@ -177,36 +185,6 @@
       created(){
         this.total= this.users.length;
       };
-
-
-
-    //   handleSizeChange (size: number) {
-    //     this.pageSize = size;
-    //     console.log(this.pageSize);  //每页下拉显示数据
-    //     this.showTable(this.currentPage,this.pageSize);
-    //   },
-    //   handleCurrentChange(currentPage: number){
-    //     this.currentPage = currentPage;
-    //     console.log(this.currentPage);  //点击第几页
-    //     this.showTable(this.currentPage,this.pageSize);
-
-    //   },
-    //   showTable(currentPage,pageSize){
-    //     this.listLoading = true;
-    //     this.$axios({
-    //       method: "POST",
-    //       url: "http://localhost:8080/api/pagingQuery",
-    //       changeOrigin: true,
-    //       data: {
-    //         "start":currentPage,
-    //         "pageSize":pageSize
-    //       }
-    //     }).then(result => {
-    //       this.listLoading = false;
-    //       this.showData = result.data;
-    //     });
-    //   }
-    // },
     }
 </script>
 

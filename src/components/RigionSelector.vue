@@ -1,42 +1,50 @@
 <template>
-  <div>
-      <span label="省">省：
-        <el-select v-model="address.province"
-                   placeholder="请选择省"
-                   @change="changeProvince">
-          <el-option
-            v-for="item in provinceList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </span>
-      <span label="市">市：
-        <el-select v-model="address.city"
-                   placeholder="请选择市"
-                   @change="changeCity">
-          <el-option
-            v-for="item in cityOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </span>
-      <span label="区">区：
-        <el-select v-model="address.origin"
-                   placeholder="请选择区"
-                   @change="changeOrigin">
-          <el-option
-            v-for="item in originOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </span>
-    </div>
+  <el-form v-model="address">
+    <el-row title="公司所在地址">
+      <el-col :span="6" class="col-width">
+        <el-form-item label="省">
+          <el-select v-model="address.province"
+                    placeholder="请选择省"
+                    @change="changeProvince">
+            <el-option
+              v-for="item in provinceList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="6" class="col-width">
+        <el-form-item label="市">
+          <el-select v-model="address.city"
+                    placeholder="请选择市"
+                    @change="changeCity">
+            <el-option
+              v-for="item in cityOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="6" class="col-width">
+        <el-form-item label="区">
+          <el-select v-model="address.origin"
+                    placeholder="请选择区"
+                    @change="changeOrigin">
+            <el-option
+              v-for="item in originOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>  
+  </el-form>
 </template>
 <script lang= "ts">
   import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
@@ -94,7 +102,7 @@ export default class RegionSelector extends Vue {
       };
 
       mounted () { // 在mounted时候赋值，子组件只更新一次，后面重新选择后展示此组件的数据，不再更新
-       
+         
       };
     
       
@@ -103,9 +111,9 @@ export default class RegionSelector extends Vue {
          this.provinceList.forEach((province, index) => {
            if (val.toString() === this.provinceList[index].value) {
              this.cityOptions = this.provinceList[index].children
-            // this.originOptions = this.provinceList[index].children[0].children
-            // this.address.city = this.provinceList[index].children[0].value
-            // this.address.origin = this.provinceList[index].children[0].children[0].value
+             this.originOptions = this.provinceList[index].children[0].children
+             this.address.city = this.provinceList[index].children[0].value
+             this.address.origin = this.provinceList[index].children[0].children[0].value
            }
          })
       };
@@ -114,7 +122,7 @@ export default class RegionSelector extends Vue {
         this.cityList.forEach((city, index) => {
           if (val.toString() === this.cityList[index].value) {
             this.originOptions = this.cityList[index].children
-           // this.address.origin = this.cityList[index].children[0].value
+            this.address.origin = this.cityList[index].children[0].value
           }
         })
       };
@@ -124,7 +132,8 @@ export default class RegionSelector extends Vue {
       };
       public _getJsonData() {
         console.log("-----------------------开始解析");
-        let data: Area[] = require('../static/china_address');
+       // let data: Area[] = require('../static/china_address');
+        let data: Area[] = require('../../public/china_address.json')
         console.log(data);
         this.provinceList = []
         this.cityList = []
@@ -182,5 +191,8 @@ export default class RegionSelector extends Vue {
 </script>
 
 <style scoped>
+  .col-width{
+    width: 300px;
+  }
 
 </style>>
