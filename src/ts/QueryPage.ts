@@ -167,25 +167,6 @@ export default class QueryPage extends Vue {
     this.deleteUser(row, index);
   }
 
-  public addUser(form: UserInfo) {
-    console.log('-------------新增用户------------');
-    axios({
-      method: 'put',
-      url: '/api/insertUser',
-      data: JSON.stringify(form),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    }).then((res) => {
-      let that = this;
-      // that.formInline = res.data.list;
-      that.dialogUpdateVisible = false;
-      that.$message({
-        message: res.data.message,
-        type: 'success'
-      });
-    })
-  };
 
   /**
    * 前后端数据交互事件
@@ -206,7 +187,8 @@ export default class QueryPage extends Vue {
         province: that.formInline.companyAddress.province,
         city: that.formInline.companyAddress.city,
         origin: that.formInline.companyAddress.origin
-      }
+      },
+      timeout: 1000* 30
     }).then((res) => {
       console.log('--------------------数据返回---------------');
       console.log(res.data);
@@ -220,6 +202,36 @@ export default class QueryPage extends Vue {
         type: 'success'
       });
       // window.alert("查询成功");
+    }).catch (error => {
+      hideLoading();
+      that.$message({
+        message: '网络错误',
+        type: 'error'
+      });
+    })
+  };
+  public addUser(form: UserInfo) {
+    console.log('-------------新增用户------------');
+    let that = this;
+    axios({
+      method: 'put',
+      url: '/api/insertUser',
+      data: JSON.stringify(form),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then((res) => {
+      that.dialogUpdateVisible = false;
+      that.$message({
+        message: res.data.message,
+        type: 'success'
+      });
+    }).catch (error => {
+      hideLoading();
+      that.$message({
+        message: '网络错误',
+        type: 'error'
+      });
     })
   };
   // 更新用户请求
@@ -232,11 +244,18 @@ export default class QueryPage extends Vue {
       headers: {
         'Content-Type': 'application/json'
       },    
-      data: JSON.stringify(form)
+      data: JSON.stringify(form),
+      timeout: 1000 * 30
     }).then((res) => {
       hideLoading();
       this.dialogUpdateVisible = false;
       window.alert(res.data.message);
+    }).catch (error => {
+      hideLoading();
+      that.$message({
+        message: '网络错误',
+        type: 'error'
+      });
     })
   };
   // 删除用户请求
@@ -248,7 +267,8 @@ export default class QueryPage extends Vue {
       url: '/api/deleteUser',
       params: {
         id: row.id
-      }
+      },
+      timeout: 1000 * 30
     }).then((res) => {
       // window.alert(res.data.message);
       hideLoading();
@@ -258,8 +278,12 @@ export default class QueryPage extends Vue {
       });
       console.log('--------------------调用QueryPage中的删除行方法-------------------------')
       that.$refs.testTable.deleteRow(index);
-
-
+    }).catch (error => {
+      hideLoading();
+      that.$message({
+        message: '网络错误',
+        type: 'error'
+      });
     })
   }
 

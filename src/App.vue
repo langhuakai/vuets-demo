@@ -12,7 +12,7 @@ import Element from 'element-ui'
 export default {
   name: 'app',
   components: {
-    'HelloWorld':HelloWorld,
+    'QueryPage':QueryPage,
   }
 }
 </script>

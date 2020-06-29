@@ -1,6 +1,6 @@
 <template>
   <el-form v-model="address">
-    <el-row title="公司所在地址">
+    <el-row>
       <el-col :span="6" class="col-width">
         <el-form-item label="省">
           <el-select v-model="address.province"

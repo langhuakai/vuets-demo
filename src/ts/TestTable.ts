@@ -86,7 +86,13 @@ export default class TestTable extends Vue {
   }
   handleDeleteClick(index: number, row: UserInfo) {
     console.log('-------------------执行TestTable中的handleDeleteClick方法--------------------------')
-    this.$emit('onDeleteClick', row, index)
+    this.$confirm('此操作将删除用户，是否继续？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }).then(() => {
+      this.$emit('onDeleteClick', row, index);
+    })
   }
 
   // 删除行

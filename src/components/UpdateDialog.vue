@@ -1,21 +1,22 @@
 <template>
     <el-dialog title="基础信息" :visible.sync="dialogVisible" :before-close="handleUpdateClose" open="onDialogOpen">
         <el-form :model="form">
+
             <el-row>
-                <el-col :span="6">
+                <el-col :span="8">
                     <el-form-item label="姓名">
-                        <el-input v-model="form.userName" autocomplete="off"></el-input>
+                        <el-input :style="{width: '90%'}"  v-model="form.userName" autocomplete="off"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="8">
                     <el-form-item label="性别">
-                        <el-select v-model="form.sex">
+                        <el-select v-model="form.sex" :style="{width: '90%'}">
                             <el-option label="男" value="男"></el-option>
                             <el-option label="女" value="女"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="8">
                     <el-form-item
                         label="年龄"
                         prop="age"
@@ -24,14 +25,15 @@
                         { type: 'number', message: '年龄必须为数字值'}
                         ]"
                     >
-                        <el-input type="age" v-model.number="form.age" autocomplete="off"></el-input>
+                        <el-input :style="{width: '90%'}" type="age" v-model.number="form.age" autocomplete="off"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
             <el-row>
-                <el-col :span="6">
+                <el-col :span="8">
                     <el-form-item label="入职日期">
                         <el-date-picker
+                        :style="{width: '90%'}"
                         v-model="form.entryDate"
                         type="date"
                         value-format="yyyy-MM-dd"
@@ -40,7 +42,7 @@
                         </el-date-picker>
                     </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="8">
                     <el-form-item
                         prop="email"
                         label="邮箱"
@@ -49,12 +51,12 @@
                         { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
                         ]"
                     >
-                        <el-input v-model="form.email"></el-input>
+                        <el-input :style="{width: '90%'}" v-model="form.email"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="8">
                     <el-form-item label="联系方式">
-                        <el-input v-model="form.phone" autocomplete="off"></el-input>
+                        <el-input :style="{width: '90%'}" v-model="form.phone" autocomplete="off"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -80,7 +82,11 @@
                     </el-checkbox-group>
                 </el-form-item>
             </el-row>
-            <RigionSelector ref="rigionSelector" :componentAddress= "this.form.companyAddress"/>
+            <el-row>
+                <el-form-item label="公司地址">
+                    <RigionSelector ref="rigionSelector" :componentAddress= "this.form.companyAddress"/>
+                </el-form-item>
+            </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="handleUpdateClose">取 消</el-button>
@@ -92,5 +98,9 @@
 
 </script>
 <style>
+
+.input-width{
+    width: 80%;
+  }
 
 </style>
